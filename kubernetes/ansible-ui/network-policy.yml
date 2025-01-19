@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-local-network
+  namespace: semaphore
+spec:
+  podSelector:
+    matchLabels:
+      app: semaphore
+  policyTypes:
+    - Egress
+  egress:
+    # Allow access to the local network
+    - to:
+        - ipBlock:
+            cidr: 192.168.86.0/24
+      ports:
+        - protocol: TCP
+          port: 22 # Allow SSH
+    # Allow DNS resolution (required for internet access)
+    - to:
+        - ipBlock:
+            cidr: 192.168.86.5/32 # Pi-hole
+      ports:
+        - protocol: UDP
+          port: 53
+    # Allow internet access
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
