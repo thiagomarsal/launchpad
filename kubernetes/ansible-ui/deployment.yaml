@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: semaphore
+  namespace: semaphore
+  labels:
+    app: semaphore
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: semaphore
+  template:
+    metadata:
+      labels:
+        app: semaphore
+    spec:
+      containers:
+        - name: semaphore
+          image: semaphoreui/semaphore:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: SEMAPHORE_DB_DIALECT
+              value: "bolt"
+            - name: SEMAPHORE_ADMIN
+              value: "admin"
+            - name: SEMAPHORE_ADMIN_PASSWORD
+              value: "changeme"
+            - name: SEMAPHORE_ADMIN_NAME
+              value: "Admin"
+            - name: SEMAPHORE_ADMIN_EMAIL
+              value: "admin@localhost"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: semaphore-service
+  namespace: semaphore
+  labels:
+    app: semaphore
+spec:
+  selector:
+    app: semaphore
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+  type: LoadBalancer

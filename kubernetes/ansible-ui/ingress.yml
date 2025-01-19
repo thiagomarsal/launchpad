@@ -1,0 +1,18 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: semaphore-ingress
+  namespace: semaphore
+  annotations:
+    kubernetes.io/ingress.class: traefik-external
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`ansible.tmf-solutions.com`) || Host(`ansible.local.tmf-solutions.com`)
+      kind: Rule
+      services:
+        - name: semaphore-service
+          port: 3000
+  tls:
+    secretName: tmf-solutions-com-live-tls
