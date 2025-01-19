@@ -1,0 +1,5 @@
+- name: connectivity check
+  hosts: "*"
+  tasks:
+    - name: ping check
+      ping:
